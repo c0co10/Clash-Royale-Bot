@@ -21,3 +21,12 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGNING_ALLOWED: NO
         CODE_SIGNING_REQUIRED: NO
+schemes:
+  ClashBot:
+    build:
+      targets:
+        ClashBot: all
+    run:
+      config: Debug
+    archive:
+      config: Release
