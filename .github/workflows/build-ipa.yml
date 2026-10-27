@@ -1,0 +1,29 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - name: Build archive
+        run: |
+          xcodebuild -project ClashBot.xcodeproj -scheme ClashBot -configuration Release \
+            -destination "generic/platform=iOS" -archivePath build/ClashBot.xcarchive archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+      - name: Export unsigned IPA
+        run: |
+          mkdir -p build/ipa
+          cp -R build/ClashBot.xcarchive/Products/Applications/ClashBot.app build/ipa/Payload
+          cd build/ipa
+          zip -qry ClashBot.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClashBot-ipa
+          path: build/ipa/ClashBot.ipa
